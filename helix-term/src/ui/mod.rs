@@ -8,6 +8,7 @@ mod popup;
 mod prompt;
 mod spinner;
 mod text;
+mod tree;
 
 pub use completion::Completion;
 pub use editor::EditorView;
