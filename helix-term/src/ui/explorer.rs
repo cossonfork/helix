@@ -3,7 +3,10 @@ use crate::{
     ctrl, key, shift,
 };
 use crossterm::event::Event;
-use tui::{buffer::Buffer as Surface, widgets::Table};
+use tui::{
+    buffer::Buffer as Surface,
+    widgets::{Table, TableState},
+};
 
 pub use tui::widgets::{Cell, Row};
 
@@ -35,8 +38,10 @@ struct Explorer {
     raw_items: Vec<PathItem>,
     style: DisplayStyle, // should use fn？
     mode: Mode,
-    pos: (u16, u16),               // (top, selected)
-    results: Vec<(String, usize)>, // Vec<(display, raw_index)>
+    offset: usize,
+    selected: usize,
+    view_list: Vec<(String, usize)>, // Vec<(display, raw_index)>
+    height: usize,
 }
 
 impl Explorer {
@@ -45,15 +50,106 @@ impl Explorer {
             raw_items: items,
             style: DisplayStyle::Tree,
             mode: Mode::Normal,
-            pos: (0, 0),
-            results: Vec::new(),
+            offset: 0,
+            selected: 0,
+            view_list: Vec::new(),
+            height: 0,
         }
     }
 }
 
 impl Component for Explorer {
     fn render(&mut self, area: Rect, frame: &mut Surface, ctx: &mut Context) {
-        todo!()
+        let theme = &ctx.editor.theme;
+        let style = theme
+            .try_get("ui.menu")
+            .unwrap_or_else(|| theme.get("ui.text"));
+        let selected = theme.get("ui.menu.selected");
+        let rows: Vec<Row> = self
+            .view_list
+            .iter()
+            .enumerate()
+            .map(|(index, item)| Row::new([Cell::from(item.0.as_str())]))
+            .collect();
+        let table = Table::new(rows)
+            .style(style)
+            .highlight_style(selected)
+            .column_spacing(1);
+        table.render_table(
+            area,
+            frame,
+            &mut TableState {
+                offset: self.offset,
+                selected: Some(self.selected),
+            },
+        );
+    }
+
+    fn handle_event(&mut self, event: Event, _ctx: &mut Context) -> EventResult {
+        let event = match event {
+            Event::Key(event) => event,
+            _ => return EventResult::Ignored,
+        };
+
+        let close_fn = EventResult::Consumed(Some(Box::new(|compositor: &mut Compositor| {
+            // remove the layer
+            compositor.pop();
+        })));
+
+        match event.into() {
+            // esc or ctrl-c aborts the completion and closes the menu
+            key!(Esc) | ctrl!('c') => {
+                (self.callback_fn)(cx.editor, self.selection(), MenuEvent::Abort);
+                return close_fn;
+            }
+            // arrow up/ctrl-p/shift-tab prev completion choice (including updating the doc)
+            shift!(BackTab) | key!(Up) | ctrl!('p') | ctrl!('k') => {
+                self.move_up();
+                (self.callback_fn)(cx.editor, self.selection(), MenuEvent::Update);
+                return EventResult::Consumed(None);
+            }
+            key!(Tab) | key!(Down) | ctrl!('n') | ctrl!('j') => {
+                // arrow down/ctrl-n/tab advances completion choice (including updating the doc)
+                self.move_down();
+                (self.callback_fn)(cx.editor, self.selection(), MenuEvent::Update);
+                return EventResult::Consumed(None);
+            }
+            key!(Enter) => {
+                if let Some(selection) = self.selection() {
+                    (self.callback_fn)(cx.editor, Some(selection), MenuEvent::Validate);
+                }
+                return close_fn;
+            }
+            // KeyEvent {
+            //     code: KeyCode::Char(c),
+            //     modifiers: KeyModifiers::NONE,
+            // } => {
+            //     self.insert_char(c);
+            //     (self.callback_fn)(cx.editor, &self.line, MenuEvent::Update);
+            // }
+
+            // / -> edit_filter?
+            //
+            // enter confirms the match and closes the menu
+            // typing filters the menu
+            // if we run out of options the menu closes itself
+            _ => (),
+        }
+        // for some events, we want to process them but send ignore, specifically all input except
+        // tab/enter/ctrl-k or whatever will confirm the selection/ ctrl-n/ctrl-p for scroll.
+        // EventResult::Consumed(None)
+        EventResult::Ignored
+    }
+
+    fn required_size(&mut self, viewport: (u16, u16)) -> Option<(u16, u16)> {
+        // TODO: for scrolling, the scroll wrapper should place a size + offset on the Context
+        // that way render can use it
+        self.height = viewport.1 as usize;
+        None
+    }
+
+    fn type_name(&self) -> &'static str {
+        std::any::type_name::<Self>()
     }
 }
 
