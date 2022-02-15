@@ -17,8 +17,8 @@ use helix_core::{
     search, selection, shellwords, surround, textobject,
     tree_sitter::Node,
     unicode::width::UnicodeWidthChar,
-    LineEnding, Position, Range, Rope, RopeGraphemes, RopeSlice, Selection, SmallVec, Tendril,
-    Transaction,
+    visual_coords_at_pos, LineEnding, Position, Range, Rope, RopeGraphemes, RopeSlice, Selection,
+    SmallVec, Tendril, Transaction,
 };
 use helix_view::{
     clipboard::ClipboardType,
@@ -782,63 +782,61 @@ fn align_selections(cx: &mut Context) {
     }
 
     let (view, doc) = current!(cx.editor);
+    let tab_width = doc.tab_width();
     let text = doc.text().slice(..);
     let selection = doc.selection(view.id);
-    let mut column_widths = vec![];
-    let mut last_line = text.len_lines();
-    let mut column = 0;
     // first of all, we need compute all column's width, let use max width of the selections in a column
+    let mut max_col = 0usize;
+    // 优化计算插入字符性能
+    // todo 居中对齐实现
+    let mut last_line = None;
     for sel in selection {
-        let (l1, l2) = sel.line_range(text);
-        if l1 != l2 {
-            cx.editor
-                .set_error("align cannot work with multi line selections");
-            return;
-        }
-        // if the selection is not in the same line with last selection, we set the column to 0
-        column = if l1 != last_line { 0 } else { column + 1 };
-        last_line = l1;
-
-        if column < column_widths.len() {
-            if sel.to() - sel.from() > column_widths[column] {
-                column_widths[column] = sel.to() - sel.from();
+        let cur_line = text.char_to_line(sel.head);
+        if let Some(l) = last_line {
+            if l == cur_line {
+                cx.editor
+                    .set_error("align only accept one selection on a line".to_string());
+                return;
             }
-        } else {
-            // a new column, current selection width is the temp width of the column
-            column_widths.push(sel.to() - sel.from());
+        }
+        last_line = Some(cur_line);
+        let col = visual_coords_at_pos(text, sel.head, tab_width).col;
+        if col > max_col {
+            max_col = col
         }
     }
-    last_line = text.len_lines();
     // once we get the with of each column, we transform each selection with to it's column width based on the align style
+    let s = " ";
     let transaction = Transaction::change_by_selection(doc.text(), selection, |range| {
-        let l = range.cursor_line(text);
-        column = if l != last_line { 0 } else { column + 1 };
-        last_line = l;
-
-        (
-            range.from(),
-            range.to(),
-            Some(
-                align_fragment_to_width(&range.fragment(text), column_widths[column], align_style)
-                    .into(),
-            ),
-        )
+        let from = if range.from() == range.head {
+            range.head
+        } else {
+            let from = text.line_to_char(text.char_to_line(range.head));
+            std::cmp::max(from, range.from())
+        };
+        let col = visual_coords_at_pos(text, range.head, tab_width).col;
+        let content = s.repeat(max_col - col);
+        (from, from, Some(content.into()))
     });
 
     doc.apply(&transaction, view.id);
 }
 
-fn align_fragment_to_width(fragment: &str, width: usize, align_style: usize) -> String {
-    let trimed = fragment.trim_matches(|c| c == ' ');
-    let mut s = " ".repeat(width - trimed.chars().count());
-    match align_style {
-        1 => s.insert_str(0, trimed),           // left align
-        2 => s.insert_str(s.len() / 2, trimed), // center align
-        3 => s.push_str(trimed),                // right align
-        n => unimplemented!("{}", n),
-    }
-    s
+fn align_selections_center(cx: &mut Context, c: char) {
+    todo!()
 }
+
+// fn align_fragment_to_width(fragment: &str, width: usize, align_style: usize) -> String {
+//     let trimed = fragment.trim_matches(|c| c == ' ');
+//     let mut s = " ".repeat(width - trimed.chars().count());
+//     match align_style {
+//         1 => s.insert_str(0, trimed),           // left align
+//         2 => s.insert_str(s.len() / 2, trimed), // center align
+//         3 => s.push_str(trimed),                // right align
+//         n => unimplemented!("{}", n),
+//     }
+//     s
+// }
 
 fn goto_window(cx: &mut Context, align: Align) {
     let count = cx.count() - 1;
