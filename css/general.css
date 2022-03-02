@@ -114,6 +114,19 @@ h6:target::before {
     margin-bottom: .875em;
 }
 
+.content ul li {
+margin-bottom: .25rem;
+}
+.content ul {
+    list-style-type: square;
+}
+.content ul ul, .content ol ul {
+    margin-bottom: .5rem;
+}
+.content li p {
+    margin-bottom: .5em;
+}
+
 .content p { line-height: 1.45em; }
 .content ol { line-height: 1.45em; }
 .content ul { line-height: 1.45em; }
@@ -149,7 +162,6 @@ table thead td {
 table thead th {
     padding: .75rem;
     text-align: left;
-    color: var(--table-border-color);
     font-weight: 500;
     line-height: 1.5;
     width: auto;
@@ -214,4 +226,8 @@ blockquote *:last-child {
     color: var(--sidebar-fg);
     margin: 5px 0px;
     font-weight: bold;
+}
+
+.result-no-output {
+    font-style: italic;
 }
