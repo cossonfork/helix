@@ -170,6 +170,9 @@ configure Nix to use cached outputs when possible.</p>
 <pre><code>sudo dnf copr enable varlad/helix
 sudo dnf install helix
 </code></pre>
+<h3 id="void-linux"><a class="header" href="#void-linux">Void Linux</a></h3>
+<pre><code>sudo xbps-install helix
+</code></pre>
 <h2 id="build-from-source"><a class="header" href="#build-from-source">Build from source</a></h2>
 <pre><code>git clone https://github.com/helix-editor/helix
 cd helix
@@ -503,6 +506,8 @@ and <a href="./usage.html#textobject">textobject</a> usage.</p>
 <tr><td><code>[a</code></td><td>Go to previous argument/parameter (<strong>TS</strong>)</td><td><code>goto_prev_parameter</code></td></tr>
 <tr><td><code>]o</code></td><td>Go to next comment (<strong>TS</strong>)</td><td><code>goto_next_comment</code></td></tr>
 <tr><td><code>[o</code></td><td>Go to previous comment (<strong>TS</strong>)</td><td><code>goto_prev_comment</code></td></tr>
+<tr><td><code>]p</code></td><td>Go to next paragraph</td><td><code>goto_next_paragraph</code></td></tr>
+<tr><td><code>[p</code></td><td>Go to previous paragraph</td><td><code>goto_prev_paragraph</code></td></tr>
 <tr><td><code>[space</code></td><td>Add newline above</td><td><code>add_newline_above</code></td></tr>
 <tr><td><code>]space</code></td><td>Add newline below</td><td><code>add_newline_below</code></td></tr>
 </tbody></table>
@@ -548,10 +553,10 @@ you to selectively add search terms to your selections.</p>
 <h1 id="picker"><a class="header" href="#picker">Picker</a></h1>
 <p>Keys to use within picker. Remapping currently not supported.</p>
 <table><thead><tr><th>Key</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>Up</code>, <code>Ctrl-k</code>, <code>Ctrl-p</code></td><td>Previous entry</td></tr>
-<tr><td><code>PageUp</code>, <code>Ctrl-b</code></td><td>Page up</td></tr>
-<tr><td><code>Down</code>, <code>Ctrl-j</code>, <code>Ctrl-n</code></td><td>Next entry</td></tr>
-<tr><td><code>PageDown</code>, <code>Ctrl-f</code></td><td>Page down</td></tr>
+<tr><td><code>Up</code>, <code>Ctrl-p</code></td><td>Previous entry</td></tr>
+<tr><td><code>PageUp</code>, <code>Ctrl-u</code></td><td>Page up</td></tr>
+<tr><td><code>Down</code>, <code>Ctrl-n</code></td><td>Next entry</td></tr>
+<tr><td><code>PageDown</code>, <code>Ctrl-d</code></td><td>Page down</td></tr>
 <tr><td><code>Home</code></td><td>Go to first entry</td></tr>
 <tr><td><code>End</code></td><td>Go to last entry</td></tr>
 <tr><td><code>Ctrl-space</code></td><td>Filter options</td></tr>
@@ -678,9 +683,10 @@ specific indent settings, etc see the default
 <tr><td>java</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>javascript</td><td>✓</td><td></td><td>✓</td><td><code>typescript-language-server</code></td></tr>
 <tr><td>json</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>jsx</td><td>✓</td><td></td><td>✓</td><td><code>typescript-language-server</code></td></tr>
 <tr><td>julia</td><td>✓</td><td></td><td></td><td><code>julia</code></td></tr>
 <tr><td>kotlin</td><td>✓</td><td></td><td></td><td><code>kotlin-language-server</code></td></tr>
-<tr><td>latex</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>latex</td><td>✓</td><td></td><td></td><td><code>texlab</code></td></tr>
 <tr><td>lean</td><td>✓</td><td></td><td></td><td><code>lean</code></td></tr>
 <tr><td>ledger</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>llvm</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
