@@ -532,7 +532,7 @@ undo-able &quot;save point&quot; until you return to normal mode.</p>
 <tr><td><code>Ctrl-k</code></td><td>Delete to end of line</td><td><code>kill_to_line_end</code></td></tr>
 <tr><td><code>Ctrl-j</code>, <code>Enter</code></td><td>Insert new line</td><td><code>insert_newline</code></td></tr>
 <tr><td><code>Backspace</code>, <code>Ctrl-h</code></td><td>Delete previous char</td><td><code>delete_char_backward</code></td></tr>
-<tr><td><code>Delete</code>, <code>Ctrl-d</code></td><td>Delete previous char</td><td><code>delete_char_forward</code></td></tr>
+<tr><td><code>Delete</code>, <code>Ctrl-d</code></td><td>Delete next char</td><td><code>delete_char_forward</code></td></tr>
 <tr><td><code>Ctrl-p</code>, <code>Up</code></td><td>Move to previous line</td><td><code>move_line_up</code></td></tr>
 <tr><td><code>Ctrl-n</code>, <code>Down</code></td><td>Move to next line</td><td><code>move_line_down</code></td></tr>
 <tr><td><code>PageUp</code></td><td>Move one page up</td><td><code>page_up</code></td></tr>
@@ -644,6 +644,7 @@ you to selectively add search terms to your selections.</p>
 <tr><td><code>:hsplit-new</code>, <code>:hnew</code></td><td>Open a scratch buffer in a horizontal split.</td></tr>
 <tr><td><code>:tutor</code></td><td>Open the tutorial.</td></tr>
 <tr><td><code>:goto</code>, <code>:g</code></td><td>Go to line number.</td></tr>
+<tr><td><code>:set-language</code>, <code>:lang</code></td><td>Set the language of current buffer.</td></tr>
 <tr><td><code>:set-option</code>, <code>:set</code></td><td>Set a config option at runtime</td></tr>
 <tr><td><code>:sort</code></td><td>Sort ranges in selection.</td></tr>
 <tr><td><code>:rsort</code></td><td>Sort ranges in selection in reverse order.</td></tr>
@@ -663,7 +664,7 @@ specific indent settings, etc see the default
 <tr><td>cmake</td><td>✓</td><td>✓</td><td>✓</td><td><code>cmake-language-server</code></td></tr>
 <tr><td>comment</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>cpp</td><td>✓</td><td>✓</td><td>✓</td><td><code>clangd</code></td></tr>
-<tr><td>css</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>css</td><td>✓</td><td></td><td></td><td><code>vscode-css-language-server</code></td></tr>
 <tr><td>dart</td><td>✓</td><td></td><td>✓</td><td><code>dart</code></td></tr>
 <tr><td>dockerfile</td><td>✓</td><td></td><td></td><td><code>docker-langserver</code></td></tr>
 <tr><td>elixir</td><td>✓</td><td></td><td></td><td><code>elixir-ls</code></td></tr>
@@ -680,11 +681,11 @@ specific indent settings, etc see the default
 <tr><td>graphql</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>haskell</td><td>✓</td><td></td><td></td><td><code>haskell-language-server-wrapper</code></td></tr>
 <tr><td>hcl</td><td>✓</td><td></td><td>✓</td><td><code>terraform-ls</code></td></tr>
-<tr><td>html</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>html</td><td>✓</td><td></td><td></td><td><code>vscode-html-language-server</code></td></tr>
 <tr><td>iex</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>java</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>javascript</td><td>✓</td><td></td><td>✓</td><td><code>typescript-language-server</code></td></tr>
-<tr><td>json</td><td>✓</td><td></td><td>✓</td><td></td></tr>
+<tr><td>json</td><td>✓</td><td></td><td>✓</td><td><code>vscode-json-language-server</code></td></tr>
 <tr><td>jsx</td><td>✓</td><td></td><td>✓</td><td><code>typescript-language-server</code></td></tr>
 <tr><td>julia</td><td>✓</td><td></td><td></td><td><code>julia</code></td></tr>
 <tr><td>kotlin</td><td>✓</td><td></td><td></td><td><code>kotlin-language-server</code></td></tr>
@@ -699,29 +700,33 @@ specific indent settings, etc see the default
 <tr><td>markdown</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>mint</td><td></td><td></td><td></td><td><code>mint</code></td></tr>
 <tr><td>nix</td><td>✓</td><td></td><td>✓</td><td><code>rnix-lsp</code></td></tr>
-<tr><td>ocaml</td><td>✓</td><td></td><td>✓</td><td></td></tr>
-<tr><td>ocaml-interface</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>ocaml</td><td>✓</td><td></td><td>✓</td><td><code>ocamllsp</code></td></tr>
+<tr><td>ocaml-interface</td><td>✓</td><td></td><td></td><td><code>ocamllsp</code></td></tr>
 <tr><td>org</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>perl</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
-<tr><td>php</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
+<tr><td>php</td><td>✓</td><td>✓</td><td>✓</td><td><code>intelephense</code></td></tr>
 <tr><td>prolog</td><td></td><td></td><td></td><td><code>swipl</code></td></tr>
 <tr><td>protobuf</td><td>✓</td><td></td><td>✓</td><td></td></tr>
 <tr><td>python</td><td>✓</td><td>✓</td><td>✓</td><td><code>pylsp</code></td></tr>
+<tr><td>r</td><td>✓</td><td></td><td></td><td><code>R</code></td></tr>
 <tr><td>racket</td><td></td><td></td><td></td><td><code>racket</code></td></tr>
 <tr><td>regex</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>rescript</td><td>✓</td><td>✓</td><td></td><td><code>rescript-language-server</code></td></tr>
+<tr><td>rmarkdown</td><td>✓</td><td></td><td>✓</td><td><code>R</code></td></tr>
+<tr><td>ron</td><td>✓</td><td></td><td>✓</td><td></td></tr>
 <tr><td>ruby</td><td>✓</td><td></td><td>✓</td><td><code>solargraph</code></td></tr>
 <tr><td>rust</td><td>✓</td><td>✓</td><td>✓</td><td><code>rust-analyzer</code></td></tr>
 <tr><td>scala</td><td>✓</td><td></td><td>✓</td><td><code>metals</code></td></tr>
 <tr><td>solidity</td><td>✓</td><td></td><td></td><td><code>solc</code></td></tr>
 <tr><td>svelte</td><td>✓</td><td></td><td>✓</td><td><code>svelteserver</code></td></tr>
+<tr><td>swift</td><td>✓</td><td></td><td></td><td><code>sourcekit-lsp</code></td></tr>
 <tr><td>tablegen</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
 <tr><td>toml</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>tsq</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>tsx</td><td>✓</td><td></td><td></td><td><code>typescript-language-server</code></td></tr>
 <tr><td>twig</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>typescript</td><td>✓</td><td></td><td>✓</td><td><code>typescript-language-server</code></td></tr>
-<tr><td>vue</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>vue</td><td>✓</td><td></td><td></td><td><code>vls</code></td></tr>
 <tr><td>wgsl</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>yaml</td><td>✓</td><td></td><td>✓</td><td></td></tr>
 <tr><td>zig</td><td>✓</td><td></td><td>✓</td><td><code>zls</code></td></tr>
@@ -864,8 +869,8 @@ name = &quot;rust&quot;
 <p>It's recommended define a palette of named colors, and refer to them from the
 configuration values in your theme. To do this, add a table called
 <code>palette</code> to your theme file:</p>
-<pre><code class="language-toml">ui.background = &quot;white&quot;
-ui.text = &quot;black&quot;
+<pre><code class="language-toml">&quot;ui.background&quot; = &quot;white&quot;
+&quot;ui.text&quot; = &quot;black&quot;
 
 [palette]
 white = &quot;#ffffff&quot;
@@ -1234,6 +1239,7 @@ injection-regex = &quot;^mylang$&quot;
 file-types = [&quot;mylang&quot;, &quot;myl&quot;]
 comment-token = &quot;#&quot;
 indent = { tab-width = 2, unit = &quot;  &quot; }
+language-server = { command = &quot;mylang-lsp&quot;, args = [&quot;--stdio&quot;] }
 </code></pre>
 <p>These are the available keys and descriptions for the file.</p>
 <table><thead><tr><th>Key</th><th>Description</th></tr></thead><tbody>
@@ -1247,9 +1253,13 @@ indent = { tab-width = 2, unit = &quot;  &quot; }
 <tr><td><code>diagnostic-severity</code></td><td>Minimal severity of diagnostic for it to be displayed. (Allowed values: <code>Error</code>, <code>Warning</code>, <code>Info</code>, <code>Hint</code>)</td></tr>
 <tr><td><code>comment-token</code></td><td>The token to use as a comment-token</td></tr>
 <tr><td><code>indent</code></td><td>The indent to use. Has sub keys <code>tab-width</code> and <code>unit</code></td></tr>
-<tr><td><code>config</code></td><td>Language server configuration</td></tr>
+<tr><td><code>language-server</code></td><td>The Language Server to run. Has sub keys <code>command</code> and <code>args</code></td></tr>
+<tr><td><code>config</code></td><td>Language Server configuration</td></tr>
 <tr><td><code>grammar</code></td><td>The tree-sitter grammar to use (defaults to the value of <code>name</code>)</td></tr>
 </tbody></table>
+<p>When adding a Language Server configuration, be sure to update the
+<a href="https://github.com/helix-editor/helix/wiki/How-to-install-the-default-language-servers">Language Server Wiki</a>
+with installation notes.</p>
 <h2 id="grammar-configuration"><a class="header" href="#grammar-configuration">Grammar configuration</a></h2>
 <p>If a tree-sitter grammar is available for the language, add a new <code>grammar</code>
 entry to <code>languages.toml</code>.</p>
