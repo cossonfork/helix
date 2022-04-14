@@ -603,6 +603,7 @@ you to selectively add search terms to your selections.</p>
 <tr><td><code>:buffer-next</code>, <code>:bn</code>, <code>:bnext</code></td><td>Go to next buffer.</td></tr>
 <tr><td><code>:buffer-previous</code>, <code>:bp</code>, <code>:bprev</code></td><td>Go to previous buffer.</td></tr>
 <tr><td><code>:write</code>, <code>:w</code></td><td>Write changes to disk. Accepts an optional path (:write some/path.txt)</td></tr>
+<tr><td><code>:write!</code>, <code>:w!</code></td><td>Write changes to disk forcefully (creating necessary subdirectories). Accepts an optional path (:write some/path.txt)</td></tr>
 <tr><td><code>:new</code>, <code>:n</code></td><td>Create a new scratch buffer.</td></tr>
 <tr><td><code>:format</code>, <code>:fmt</code></td><td>Format the file using the LSP formatter.</td></tr>
 <tr><td><code>:indent-style</code></td><td>Set the indentation style for editing. ('t' for tabs or 1-8 for number of spaces.)</td></tr>
@@ -653,10 +654,12 @@ you to selectively add search terms to your selections.</p>
 <tr><td><code>:config-open</code></td><td>Open the helix config.toml file.</td></tr>
 </tbody></table>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="language-support"><a class="header" href="#language-support">Language Support</a></h1>
-<p>For more information like arguments passed to default LSP server,
-extensions assosciated with a filetype, custom LSP settings, filetype
-specific indent settings, etc see the default
-<a href="https://github.com/helix-editor/helix/blob/master/languages.toml"><code>languages.toml</code></a> file.</p>
+<p>The following languages and Language Servers are supported. In order to use
+Language Server features, you must first <a href="https://github.com/helix-editor/helix/wiki/How-to-install-the-default-language-servers">install</a> the
+appropriate Language Server.</p>
+<p>Check the language support in your installed helix version with <code>hx --health</code>.</p>
+<p>Also see the <a href="./languages.html">Language Configuration</a> docs and the <a href="./guides/adding_languages.html">Adding
+Languages</a> guide for more language configuration information.</p>
 <table><thead><tr><th>Language</th><th>Syntax Highlighting</th><th>Treesitter Textobjects</th><th>Auto Indent</th><th>Default LSP</th></tr></thead><tbody>
 <tr><td>bash</td><td>✓</td><td></td><td></td><td><code>bash-language-server</code></td></tr>
 <tr><td>c</td><td>✓</td><td>✓</td><td>✓</td><td><code>clangd</code></td></tr>
@@ -667,8 +670,11 @@ specific indent settings, etc see the default
 <tr><td>css</td><td>✓</td><td></td><td></td><td><code>vscode-css-language-server</code></td></tr>
 <tr><td>dart</td><td>✓</td><td></td><td>✓</td><td><code>dart</code></td></tr>
 <tr><td>dockerfile</td><td>✓</td><td></td><td></td><td><code>docker-langserver</code></td></tr>
+<tr><td>eex</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>ejs</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>elixir</td><td>✓</td><td></td><td></td><td><code>elixir-ls</code></td></tr>
 <tr><td>elm</td><td>✓</td><td></td><td></td><td><code>elm-language-server</code></td></tr>
+<tr><td>erb</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>erlang</td><td>✓</td><td></td><td></td><td><code>erlang_ls</code></td></tr>
 <tr><td>fish</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
 <tr><td>git-commit</td><td>✓</td><td></td><td></td><td></td></tr>
@@ -681,6 +687,7 @@ specific indent settings, etc see the default
 <tr><td>graphql</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>haskell</td><td>✓</td><td></td><td></td><td><code>haskell-language-server-wrapper</code></td></tr>
 <tr><td>hcl</td><td>✓</td><td></td><td>✓</td><td><code>terraform-ls</code></td></tr>
+<tr><td>heex</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>html</td><td>✓</td><td></td><td></td><td><code>vscode-html-language-server</code></td></tr>
 <tr><td>iex</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>java</td><td>✓</td><td></td><td></td><td></td></tr>
@@ -790,7 +797,8 @@ hidden = false
 </div>
 <h3 id="editorcursor-shape-section"><a class="header" href="#editorcursor-shape-section"><code>[editor.cursor-shape]</code> Section</a></h3>
 <p>Defines the shape of cursor in each mode. Note that due to limitations
-of the terminal environment, only the primary cursor can change shape.</p>
+of the terminal environment, only the primary cursor can change shape.
+Valid values for these options are <code>block</code>, <code>bar</code>, <code>underline</code>, or <code>none</code>.</p>
 <table><thead><tr><th>Key</th><th>Description</th><th>Default</th></tr></thead><tbody>
 <tr><td><code>normal</code></td><td>Cursor shape in <a href="./keymap.html#normal-mode">normal mode</a></td><td><code>block</code></td></tr>
 <tr><td><code>insert</code></td><td>Cursor shape in <a href="./keymap.html#insert-mode">insert mode</a></td><td><code>block</code></td></tr>
@@ -1257,9 +1265,11 @@ language-server = { command = &quot;mylang-lsp&quot;, args = [&quot;--stdio&quot
 <tr><td><code>config</code></td><td>Language Server configuration</td></tr>
 <tr><td><code>grammar</code></td><td>The tree-sitter grammar to use (defaults to the value of <code>name</code>)</td></tr>
 </tbody></table>
-<p>When adding a Language Server configuration, be sure to update the
-<a href="https://github.com/helix-editor/helix/wiki/How-to-install-the-default-language-servers">Language Server Wiki</a>
-with installation notes.</p>
+<p>When adding a new language or Language Server configuration for an existing
+language, run <code>cargo xtask docgen</code> to add the new configuration to the
+<a href="guides/../lang-support.html">Language Support</a> docs before creating a pull request.
+When adding a Language Server configuration, be sure to update the
+<a href="https://github.com/helix-editor/helix/wiki/How-to-install-the-default-language-servers">Language Server Wiki</a> with installation notes.</p>
 <h2 id="grammar-configuration"><a class="header" href="#grammar-configuration">Grammar configuration</a></h2>
 <p>If a tree-sitter grammar is available for the language, add a new <code>grammar</code>
 entry to <code>languages.toml</code>.</p>
