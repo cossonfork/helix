@@ -170,11 +170,13 @@ hidden = false
 <tr><td><code>scroll-lines</code></td><td>Number of lines to scroll per scroll wheel step.</td><td><code>3</code></td></tr>
 <tr><td><code>shell</code></td><td>Shell to use when running external commands.</td><td>Unix: <code>[&quot;sh&quot;, &quot;-c&quot;]</code><br/>Windows: <code>[&quot;cmd&quot;, &quot;/C&quot;]</code></td></tr>
 <tr><td><code>line-number</code></td><td>Line number display: <code>absolute</code> simply shows each line's number, while <code>relative</code> shows the distance from the current line. When unfocused or in insert mode, <code>relative</code> will still show absolute line numbers.</td><td><code>absolute</code></td></tr>
+<tr><td><code>gutters</code></td><td>Gutters to display: Available are <code>diagnostics</code> and <code>line-numbers</code>, note that <code>diagnostics</code> also includes other features like breakpoints</td><td><code>[&quot;diagnostics&quot;, &quot;line-numbers&quot;]</code></td></tr>
 <tr><td><code>auto-completion</code></td><td>Enable automatic pop up of auto-completion.</td><td><code>true</code></td></tr>
 <tr><td><code>idle-timeout</code></td><td>Time in milliseconds since last keypress before idle timers trigger. Used for autocompletion, set to 0 for instant.</td><td><code>400</code></td></tr>
 <tr><td><code>completion-trigger-len</code></td><td>The min-length of word under cursor to trigger autocompletion</td><td><code>2</code></td></tr>
 <tr><td><code>auto-info</code></td><td>Whether to display infoboxes</td><td><code>true</code></td></tr>
 <tr><td><code>true-color</code></td><td>Set to <code>true</code> to override automatic detection of terminal truecolor support in the event of a false negative.</td><td><code>false</code></td></tr>
+<tr><td><code>rulers</code></td><td>List of column positions at which to display the rulers. Can be overidden by language specific <code>rulers</code> in <code>languages.toml</code> file.</td><td><code>[]</code></td></tr>
 </tbody></table>
 <h3 id="editorlsp-section"><a class="header" href="#editorlsp-section"><code>[editor.lsp]</code> Section</a></h3>
 <table><thead><tr><th>Key</th><th>Description</th><th>Default</th></tr></thead><tbody>
@@ -245,6 +247,26 @@ name = &quot;rust&quot;
 <tr><td><code>smart-case</code></td><td>Enable smart case regex searching (case insensitive unless pattern contains upper case characters)</td><td><code>true</code></td></tr>
 <tr><td><code>wrap-around</code></td><td>Whether the search should wrap after depleting the matches</td><td><code>true</code></td></tr>
 </tbody></table>
+<h3 id="editorwhitespace-section"><a class="header" href="#editorwhitespace-section"><code>[editor.whitespace]</code> Section</a></h3>
+<p>Options for rendering whitespace with visible characters. Use <code>:set whitespace.render all</code> to temporarily enable visible whitespace.</p>
+<table><thead><tr><th>Key</th><th>Description</th><th>Default</th></tr></thead><tbody>
+<tr><td><code>render</code></td><td>Whether to render whitespace. May either be <code>&quot;all&quot;</code> or <code>&quot;none&quot;</code>, or a table with sub-keys <code>space</code>, <code>tab</code>, and <code>newline</code>.</td><td><code>&quot;none&quot;</code></td></tr>
+<tr><td><code>characters</code></td><td>Literal characters to use when rendering whitespace. Sub-keys may be any of <code>tab</code>, <code>space</code> or <code>newline</code></td><td>See example below</td></tr>
+</tbody></table>
+<p>Example</p>
+<pre><code class="language-toml">[editor.whitespace]
+render = &quot;all&quot;
+# or control each character
+[editor.whitespace.render]
+space = &quot;all&quot;
+tab = &quot;all&quot;
+newline = &quot;none&quot;
+
+[editor.whitespace.characters]
+space = &quot;·&quot;
+tab = &quot;→&quot;
+newline = &quot;⏎&quot;
+</code></pre>
 
                     </main>
 
