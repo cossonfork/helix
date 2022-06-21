@@ -522,6 +522,10 @@ and <a href="./usage.html#textobject">textobject</a> usage.</p>
 <tr><td><code>l</code>, <code>Ctrl-l</code>, <code>Right</code></td><td>Move to right split</td><td><code>jump_view_right</code></td></tr>
 <tr><td><code>q</code>, <code>Ctrl-q</code></td><td>Close current window</td><td><code>wclose</code></td></tr>
 <tr><td><code>o</code>, <code>Ctrl-o</code></td><td>Only keep the current window, closing all the others</td><td><code>wonly</code></td></tr>
+<tr><td><code>H</code></td><td>Swap window to the left</td><td><code>swap_view_left</code></td></tr>
+<tr><td><code>J</code></td><td>Swap window downwards</td><td><code>swap_view_down</code></td></tr>
+<tr><td><code>K</code></td><td>Swap window upwards</td><td><code>swap_view_up</code></td></tr>
+<tr><td><code>L</code></td><td>Swap window to the right</td><td><code>swap_view_right</code></td></tr>
 </tbody></table>
 <h4 id="space-mode"><a class="header" href="#space-mode">Space mode</a></h4>
 <p>This layer is a kludge of mappings, mostly pickers.</p>
@@ -674,9 +678,9 @@ you to selectively add search terms to your selections.</p>
 <tr><td><code>:later</code>, <code>:lat</code></td><td>Jump to a later point in edit history. Accepts a number of steps or a time span.</td></tr>
 <tr><td><code>:write-quit</code>, <code>:wq</code>, <code>:x</code></td><td>Write changes to disk and close the current view. Accepts an optional path (:wq some/path.txt)</td></tr>
 <tr><td><code>:write-quit!</code>, <code>:wq!</code>, <code>:x!</code></td><td>Write changes to disk and close the current view forcefully. Accepts an optional path (:wq! some/path.txt)</td></tr>
-<tr><td><code>:write-all</code>, <code>:wa</code></td><td>Write changes from all views to disk.</td></tr>
-<tr><td><code>:write-quit-all</code>, <code>:wqa</code>, <code>:xa</code></td><td>Write changes from all views to disk and close all views.</td></tr>
-<tr><td><code>:write-quit-all!</code>, <code>:wqa!</code>, <code>:xa!</code></td><td>Write changes from all views to disk and close all views forcefully (ignoring unsaved changes).</td></tr>
+<tr><td><code>:write-all</code>, <code>:wa</code></td><td>Write changes from all buffers to disk.</td></tr>
+<tr><td><code>:write-quit-all</code>, <code>:wqa</code>, <code>:xa</code></td><td>Write changes from all buffers to disk and close all views.</td></tr>
+<tr><td><code>:write-quit-all!</code>, <code>:wqa!</code>, <code>:xa!</code></td><td>Write changes from all buffers to disk and close all views forcefully (ignoring unsaved changes).</td></tr>
 <tr><td><code>:quit-all</code>, <code>:qa</code></td><td>Close all views.</td></tr>
 <tr><td><code>:quit-all!</code>, <code>:qa!</code></td><td>Close all views forcefully (ignoring unsaved changes).</td></tr>
 <tr><td><code>:cquit</code>, <code>:cq</code></td><td>Quit with exit code (default 1). Accepts an optional integer exit code (:cq 2).</td></tr>
@@ -717,6 +721,8 @@ you to selectively add search terms to your selections.</p>
 <tr><td><code>:config-reload</code></td><td>Refreshes helix's config.</td></tr>
 <tr><td><code>:config-open</code></td><td>Open the helix config.toml file.</td></tr>
 <tr><td><code>:log-open</code></td><td>Open the helix log file.</td></tr>
+<tr><td><code>:insert-output</code></td><td>Run shell command, inserting output after each selection.</td></tr>
+<tr><td><code>:append-output</code></td><td>Run shell command, appending output after each selection.</td></tr>
 <tr><td><code>:pipe</code></td><td>Pipe each selection to the shell command.</td></tr>
 <tr><td><code>:run-shell-command</code>, <code>:sh</code></td><td>Run a shell command</td></tr>
 </tbody></table>
@@ -732,6 +738,7 @@ Languages</a> guide for more language configuration information.</p>
 <tr><td>c</td><td>✓</td><td>✓</td><td>✓</td><td><code>clangd</code></td></tr>
 <tr><td>c-sharp</td><td>✓</td><td></td><td></td><td><code>OmniSharp</code></td></tr>
 <tr><td>cairo</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>clojure</td><td>✓</td><td></td><td></td><td><code>clojure-lsp</code></td></tr>
 <tr><td>cmake</td><td>✓</td><td>✓</td><td>✓</td><td><code>cmake-language-server</code></td></tr>
 <tr><td>comment</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>cpon</td><td>✓</td><td></td><td>✓</td><td></td></tr>
@@ -740,12 +747,13 @@ Languages</a> guide for more language configuration information.</p>
 <tr><td>dart</td><td>✓</td><td></td><td>✓</td><td><code>dart</code></td></tr>
 <tr><td>devicetree</td><td>✓</td><td></td><td>✓</td><td></td></tr>
 <tr><td>dockerfile</td><td>✓</td><td></td><td></td><td><code>docker-langserver</code></td></tr>
+<tr><td>edoc</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>eex</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>ejs</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>elixir</td><td>✓</td><td></td><td></td><td><code>elixir-ls</code></td></tr>
+<tr><td>elixir</td><td>✓</td><td>✓</td><td></td><td><code>elixir-ls</code></td></tr>
 <tr><td>elm</td><td>✓</td><td></td><td></td><td><code>elm-language-server</code></td></tr>
 <tr><td>erb</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>erlang</td><td>✓</td><td></td><td></td><td><code>erlang_ls</code></td></tr>
+<tr><td>erlang</td><td>✓</td><td>✓</td><td></td><td><code>erlang_ls</code></td></tr>
 <tr><td>fish</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
 <tr><td>gdscript</td><td>✓</td><td></td><td>✓</td><td></td></tr>
 <tr><td>git-attributes</td><td>✓</td><td></td><td></td><td></td></tr>
@@ -754,7 +762,7 @@ Languages</a> guide for more language configuration information.</p>
 <tr><td>git-diff</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>git-ignore</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>git-rebase</td><td>✓</td><td></td><td></td><td></td></tr>
-<tr><td>gleam</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>gleam</td><td>✓</td><td>✓</td><td></td><td></td></tr>
 <tr><td>glsl</td><td>✓</td><td></td><td>✓</td><td></td></tr>
 <tr><td>go</td><td>✓</td><td>✓</td><td>✓</td><td><code>gopls</code></td></tr>
 <tr><td>gomod</td><td>✓</td><td></td><td></td><td><code>gopls</code></td></tr>
@@ -768,6 +776,7 @@ Languages</a> guide for more language configuration information.</p>
 <tr><td>iex</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>java</td><td>✓</td><td></td><td></td><td><code>jdtls</code></td></tr>
 <tr><td>javascript</td><td>✓</td><td></td><td>✓</td><td><code>typescript-language-server</code></td></tr>
+<tr><td>jsdoc</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>json</td><td>✓</td><td></td><td>✓</td><td><code>vscode-json-language-server</code></td></tr>
 <tr><td>jsx</td><td>✓</td><td></td><td>✓</td><td><code>typescript-language-server</code></td></tr>
 <tr><td>julia</td><td>✓</td><td></td><td></td><td><code>julia</code></td></tr>
@@ -789,9 +798,11 @@ Languages</a> guide for more language configuration information.</p>
 <tr><td>ocaml</td><td>✓</td><td></td><td>✓</td><td><code>ocamllsp</code></td></tr>
 <tr><td>ocaml-interface</td><td>✓</td><td></td><td></td><td><code>ocamllsp</code></td></tr>
 <tr><td>odin</td><td>✓</td><td></td><td></td><td></td></tr>
+<tr><td>openscad</td><td>✓</td><td></td><td></td><td><code>openscad-language-server</code></td></tr>
 <tr><td>org</td><td>✓</td><td></td><td></td><td></td></tr>
 <tr><td>perl</td><td>✓</td><td>✓</td><td>✓</td><td></td></tr>
 <tr><td>php</td><td>✓</td><td>✓</td><td>✓</td><td><code>intelephense</code></td></tr>
+<tr><td>prisma</td><td>✓</td><td></td><td></td><td><code>prisma-language-server</code></td></tr>
 <tr><td>prolog</td><td></td><td></td><td></td><td><code>swipl</code></td></tr>
 <tr><td>protobuf</td><td>✓</td><td></td><td>✓</td><td></td></tr>
 <tr><td>python</td><td>✓</td><td>✓</td><td>✓</td><td><code>pylsp</code></td></tr>
@@ -832,9 +843,9 @@ follows the <code>selection → action</code> model. This means that the whateve
 going to act on (a word, a paragraph, a line, etc) is selected first and the
 action itself (delete, change, yank, etc) comes second. A cursor is simply a
 single width selection.</p>
-<p>See also Kakoune's <a href="https://github.com/mawww/kakoune/wiki/Migrating-from-Vim">Migrating from Vim</a>.</p>
+<p>See also Kakoune's <a href="https://github.com/mawww/kakoune/wiki/Migrating-from-Vim">Migrating from Vim</a> and Helix's <a href="https://github.com/helix-editor/helix/wiki/Migrating-from-Vim">Migrating from Vim</a>.</p>
 <blockquote>
-<p>TODO: Mention texobjects, surround, registers</p>
+<p>TODO: Mention textobjects, surround, registers</p>
 </blockquote>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="configuration"><a class="header" href="#configuration">Configuration</a></h1>
 <p>To override global configuration parameters, create a <code>config.toml</code> file located in your config directory:</p>
@@ -1133,6 +1144,7 @@ over it and is merged into the default palette.</p>
 <li><code>operator</code> - <code>or</code>, <code>in</code></li>
 <li><code>directive</code> - Preprocessor directives (<code>#if</code> in C) </li>
 <li><code>function</code> - <code>fn</code>, <code>func</code></li>
+<li><code>storage</code> - Keywords that affect the storage of a variable, function or data structure <code>static</code>, <code>mut</code>, <code>const</code>, <code>ref</code></li>
 </ul>
 </li>
 <li>
@@ -1294,12 +1306,7 @@ j = { k = &quot;normal_mode&quot; } # Maps `jk` to exit insert mode
 <tr><td>Backspace</td><td><code>&quot;backspace&quot;</code></td></tr>
 <tr><td>Space</td><td><code>&quot;space&quot;</code></td></tr>
 <tr><td>Return/Enter</td><td><code>&quot;ret&quot;</code></td></tr>
-<tr><td>&lt;</td><td><code>&quot;lt&quot;</code></td></tr>
-<tr><td>&gt;</td><td><code>&quot;gt&quot;</code></td></tr>
-<tr><td>+</td><td><code>&quot;plus&quot;</code></td></tr>
 <tr><td>-</td><td><code>&quot;minus&quot;</code></td></tr>
-<tr><td>;</td><td><code>&quot;semicolon&quot;</code></td></tr>
-<tr><td>%</td><td><code>&quot;percent&quot;</code></td></tr>
 <tr><td>Left</td><td><code>&quot;left&quot;</code></td></tr>
 <tr><td>Right</td><td><code>&quot;right&quot;</code></td></tr>
 <tr><td>Up</td><td><code>&quot;up&quot;</code></td></tr>
@@ -1321,54 +1328,38 @@ j = { k = &quot;normal_mode&quot; } # Maps `jk` to exit insert mode
 </blockquote>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="hooks"><a class="header" href="#hooks">Hooks</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="languages"><a class="header" href="#languages">Languages</a></h1>
-<p>Language-specific settings and settings for particular language servers can be configured in a <code>languages.toml</code> file placed in your <a href="./configuration.html">configuration directory</a>. Helix actually uses two <code>languages.toml</code> files, the <a href="https://github.com/helix-editor/helix/blob/master/languages.toml">first one</a> is in the main helix repository; it contains the default settings for each language and is included in the helix binary at compile time. Users who want to see the available settings and options can either reference the helix repo's <code>languages.toml</code> file, or consult the table in the <a href="./guides/adding_languages.html">adding languages</a> section.</p>
-<p>A local <code>languages.toml</code> can be created within a <code>.helix</code> directory. Its settings will be merged with both the global and default configs.</p>
-<p>Changes made to the <code>languages.toml</code> file in a user's <a href="./configuration.html">configuration directory</a> are merged with helix's defaults on start-up, such that a user's settings will take precedence over defaults in the event of a collision. For example, the default <code>languages.toml</code> sets rust's <code>auto-format</code> to <code>true</code>. If a user wants to disable auto-format, they can change the <code>languages.toml</code> in their <a href="./configuration.html">configuration directory</a> to make the rust entry read like the example below; the new key/value pair <code>auto-format = false</code> will override the default when the two sets of settings are merged on start-up:</p>
+<p>Language-specific settings and settings for language servers are configured
+in <code>languages.toml</code> files.</p>
+<h2 id="languagestoml-files"><a class="header" href="#languagestoml-files"><code>languages.toml</code> files</a></h2>
+<p>There are three possible <code>languages.toml</code> files. The first is compiled into
+Helix and lives in the <a href="https://github.com/helix-editor/helix/blob/master/languages.toml">Helix repository</a>.
+This provides the default configurations for languages and language servers.</p>
+<p>You may define a <code>languages.toml</code> in your <a href="./configuration.html">configuration directory</a>
+which overrides values from the built-in language configuration. For example
+to disable auto-LSP-formatting in Rust:</p>
 <pre><code class="language-toml"># in &lt;config_dir&gt;/helix/languages.toml
 
 [[language]]
 name = &quot;rust&quot;
 auto-format = false
 </code></pre>
-<h2 id="tree-sitter-grammars"><a class="header" href="#tree-sitter-grammars">Tree-sitter grammars</a></h2>
-<p>Tree-sitter grammars can also be configured in <code>languages.toml</code>:</p>
-<pre><code class="language-toml"># in &lt;config_dir&gt;/helix/languages.toml
-
-[[grammar]]
-name = &quot;rust&quot;
-source = { git = &quot;https://github.com/tree-sitter/tree-sitter-rust&quot;, rev = &quot;a250c4582510ff34767ec3b7dcdd3c24e8c8aa68&quot; }
-
-[[grammar]]
-name = &quot;c&quot;
-source = { path = &quot;/path/to/tree-sitter-c&quot; }
-</code></pre>
-<p>You may use a top-level <code>use-grammars</code> key to control which grammars are fetched and built.</p>
-<pre><code class="language-toml"># Note: this key must come **before** the [[language]] and [[grammar]] sections
-use-grammars = { only = [ &quot;rust&quot;, &quot;c&quot;, &quot;cpp&quot; ] }
-# or
-use-grammars = { except = [ &quot;yaml&quot;, &quot;json&quot; ] }
-</code></pre>
-<p>When omitted, all grammars are fetched and built.</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="guides"><a class="header" href="#guides">Guides</a></h1>
-<p>This section contains guides for adding new language server configurations,
-tree-sitter grammars, textobject queries, etc.</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="adding-languages"><a class="header" href="#adding-languages">Adding languages</a></h1>
+<p>Language configuration may also be overridden local to a project by creating
+a <code>languages.toml</code> file under a <code>.helix</code> directory. Its settings will be merged
+with the language configuration in the configuration directory and the built-in
+configuration.</p>
 <h2 id="language-configuration"><a class="header" href="#language-configuration">Language configuration</a></h2>
-<p>To add a new language, you need to add a <code>language</code> entry to the
-<a href="https://github.com/helix-editor/helix/blob/master/languages.toml"><code>languages.toml</code></a> found in the root of the repository;
-this <code>languages.toml</code> file is included at compilation time, and is
-distinct from the <code>languages.toml</code> file in the user's <a href="guides/../configuration.html">configuration
-directory</a>.</p>
+<p>Each language is configured by adding a <code>[[language]]</code> section to a
+<code>languages.toml</code> file. For example:</p>
 <pre><code class="language-toml">[[language]]
 name = &quot;mylang&quot;
-scope = &quot;scope.mylang&quot;
+scope = &quot;source.mylang&quot;
 injection-regex = &quot;^mylang$&quot;
 file-types = [&quot;mylang&quot;, &quot;myl&quot;]
 comment-token = &quot;#&quot;
 indent = { tab-width = 2, unit = &quot;  &quot; }
 language-server = { command = &quot;mylang-lsp&quot;, args = [&quot;--stdio&quot;] }
 </code></pre>
-<p>These are the available keys and descriptions for the file.</p>
+<p>These configuration keys are available:</p>
 <table><thead><tr><th>Key</th><th>Description</th></tr></thead><tbody>
 <tr><td><code>name</code></td><td>The name of the language</td></tr>
 <tr><td><code>scope</code></td><td>A string like <code>source.js</code> that identifies the language. Currently, we strive to match the scope names used by popular TextMate grammars and by the Linguist library. Usually <code>source.&lt;name&gt;</code> or <code>text.&lt;name&gt;</code> in case of markup languages</td></tr>
@@ -1380,18 +1371,31 @@ language-server = { command = &quot;mylang-lsp&quot;, args = [&quot;--stdio&quot
 <tr><td><code>diagnostic-severity</code></td><td>Minimal severity of diagnostic for it to be displayed. (Allowed values: <code>Error</code>, <code>Warning</code>, <code>Info</code>, <code>Hint</code>)</td></tr>
 <tr><td><code>comment-token</code></td><td>The token to use as a comment-token</td></tr>
 <tr><td><code>indent</code></td><td>The indent to use. Has sub keys <code>tab-width</code> and <code>unit</code></td></tr>
-<tr><td><code>language-server</code></td><td>The Language Server to run. Has sub keys <code>command</code> and <code>args</code></td></tr>
+<tr><td><code>language-server</code></td><td>The Language Server to run. See the Language Server configuration section below.</td></tr>
 <tr><td><code>config</code></td><td>Language Server configuration</td></tr>
 <tr><td><code>grammar</code></td><td>The tree-sitter grammar to use (defaults to the value of <code>name</code>)</td></tr>
 </tbody></table>
-<p>When adding a new language or Language Server configuration for an existing
-language, run <code>cargo xtask docgen</code> to add the new configuration to the
-<a href="guides/../lang-support.html">Language Support</a> docs before creating a pull request.
-When adding a Language Server configuration, be sure to update the
-<a href="https://github.com/helix-editor/helix/wiki/How-to-install-the-default-language-servers">Language Server Wiki</a> with installation notes.</p>
-<h2 id="grammar-configuration"><a class="header" href="#grammar-configuration">Grammar configuration</a></h2>
-<p>If a tree-sitter grammar is available for the language, add a new <code>grammar</code>
-entry to <code>languages.toml</code>.</p>
+<h3 id="language-server-configuration"><a class="header" href="#language-server-configuration">Language Server configuration</a></h3>
+<p>The <code>language-server</code> field takes the following keys:</p>
+<table><thead><tr><th>Key</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>command</code></td><td>The name of the language server binary to execute. Binaries must be in <code>$PATH</code></td></tr>
+<tr><td><code>args</code></td><td>A list of arguments to pass to the language server binary</td></tr>
+<tr><td><code>timeout</code></td><td>The maximum time a request to the language server may take, in seconds. Defaults to <code>20</code></td></tr>
+<tr><td><code>language-id</code></td><td>The language name to pass to the language server. Some language servers support multiple languages and use this field to determine which one is being served in a buffer</td></tr>
+</tbody></table>
+<p>The top-level <code>config</code> field is used to configure the LSP initialization options. A <code>format</code>
+sub-table within <code>config</code> can be used to pass extra formatting options to
+<a href="https://github.com/microsoft/language-server-protocol/blob/gh-pages/_specifications/specification-3-16.md#document-formatting-request--leftwards_arrow_with_hook">Document Formatting Requests</a>.
+For example with typescript:</p>
+<pre><code class="language-toml">[[language]]
+name = &quot;typescript&quot;
+auto-format = true
+# pass format options according to https://github.com/typescript-language-server/typescript-language-server#workspacedidchangeconfiguration omitting the &quot;[language].format.&quot; prefix.
+config = { format = { &quot;semicolons&quot; = &quot;insert&quot;, &quot;insertSpaceBeforeFunctionParenthesis&quot; = true } }
+</code></pre>
+<h2 id="tree-sitter-grammar-configuration"><a class="header" href="#tree-sitter-grammar-configuration">Tree-sitter grammar configuration</a></h2>
+<p>The source for a language's tree-sitter grammar is specified in a <code>[[grammar]]</code>
+section in <code>languages.toml</code>. For example:</p>
 <pre><code class="language-toml">[[grammar]]
 name = &quot;mylang&quot;
 source = { git = &quot;https://github.com/example/mylang&quot;, rev = &quot;a250c4582510ff34767ec3b7dcdd3c24e8c8aa68&quot; }
@@ -1408,7 +1412,33 @@ git repository:</p>
 <tr><td><code>rev</code></td><td>The revision (commit hash or tag) which should be fetched</td></tr>
 <tr><td><code>subpath</code></td><td>A path within the grammar directory which should be built. Some grammar repositories host multiple grammars (for example <code>tree-sitter-typescript</code> and <code>tree-sitter-ocaml</code>) in subdirectories. This key is used to point <code>hx --grammar build</code> to the correct path for compilation. When omitted, the root of repository is used</td></tr>
 </tbody></table>
-<p>Or a <code>path</code> key with an absolute path to a locally available grammar directory.</p>
+<h3 id="choosing-grammars"><a class="header" href="#choosing-grammars">Choosing grammars</a></h3>
+<p>You may use a top-level <code>use-grammars</code> key to control which grammars are
+fetched and built when using <code>hx --grammar fetch</code> and <code>hx --grammar build</code>.</p>
+<pre><code class="language-toml"># Note: this key must come **before** the [[language]] and [[grammar]] sections
+use-grammars = { only = [ &quot;rust&quot;, &quot;c&quot;, &quot;cpp&quot; ] }
+# or
+use-grammars = { except = [ &quot;yaml&quot;, &quot;json&quot; ] }
+</code></pre>
+<p>When omitted, all grammars are fetched and built.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="guides"><a class="header" href="#guides">Guides</a></h1>
+<p>This section contains guides for adding new language server configurations,
+tree-sitter grammars, textobject queries, etc.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="adding-languages"><a class="header" href="#adding-languages">Adding languages</a></h1>
+<h2 id="language-configuration-1"><a class="header" href="#language-configuration-1">Language configuration</a></h2>
+<p>To add a new language, you need to add a <code>[[language]]</code> entry to the
+<code>languages.toml</code> (see the <a href="guides/../languages.html">language configuration section</a>).</p>
+<p>When adding a new language or Language Server configuration for an existing
+language, run <code>cargo xtask docgen</code> to add the new configuration to the
+<a href="guides/../lang-support.html">Language Support</a> docs before creating a pull request.
+When adding a Language Server configuration, be sure to update the
+<a href="https://github.com/helix-editor/helix/wiki/How-to-install-the-default-language-servers">Language Server Wiki</a> with installation notes.</p>
+<h2 id="grammar-configuration"><a class="header" href="#grammar-configuration">Grammar configuration</a></h2>
+<p>If a tree-sitter grammar is available for the language, add a new <code>[[grammar]]</code>
+entry to <code>languages.toml</code>.</p>
+<p>You may use the <code>source.path</code> key rather than <code>source.git</code> with an absolute path
+to a locally available grammar for testing, but switch to <code>source.git</code> before
+submitting a pull request.</p>
 <h2 id="queries"><a class="header" href="#queries">Queries</a></h2>
 <p>For a language to have syntax-highlighting and indentation among
 other things, you have to add queries. Add a directory for your
