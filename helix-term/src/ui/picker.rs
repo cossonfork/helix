@@ -541,7 +541,7 @@ impl<T: Item + 'static> Component for Picker<T> {
                 }
                 return close_fn;
             }
-            ctrl!(' ') => {
+            key!(' ') => {
                 self.save_filter(cx);
             }
             ctrl!('t') => {
