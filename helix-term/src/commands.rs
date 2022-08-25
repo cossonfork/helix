@@ -2868,13 +2868,11 @@ pub mod insert {
         super::completion(cx);
     }
 
-    fn language_server_completion(cx: &mut Context, ch: char) {
+    pub fn is_server_trigger_char(doc: &Document, ch: char) -> bool {
         use helix_lsp::lsp;
-        // if ch matches completion char, trigger completion
-        let doc = doc_mut!(cx.editor);
         let language_server = match doc.language_server() {
             Some(language_server) => language_server,
-            None => return,
+            None => return false,
         };
 
         let capabilities = language_server.capabilities();
@@ -2884,11 +2882,24 @@ pub mod insert {
             ..
         }) = &capabilities.completion_provider
         {
-            // TODO: what if trigger is multiple chars long
             if triggers.iter().any(|trigger| trigger.contains(ch)) {
-                cx.editor.clear_idle_timer();
-                super::completion(cx);
+                return true;
             }
+        }
+        false
+    }
+
+    fn language_server_completion(cx: &mut Context, ch: char) {
+        use helix_core::chars::char_is_word;
+
+        // if ch matches completion char, trigger completion
+        let doc = doc_mut!(cx.editor);
+        if char_is_word(ch) && doc.savepoint.is_none() {
+            cx.editor.reset_idle_timer();
+            return;
+        }
+        if is_server_trigger_char(doc, ch) {
+            cx.editor.reset_idle_timer_zero();
         }
     }
 
@@ -3807,6 +3818,13 @@ pub fn completion(cx: &mut Context) {
     let pos = pos_to_lsp_pos(doc.text(), cursor, offset_encoding);
 
     let future = language_server.completion(doc.identifier(), pos, None);
+    let future = async move {
+        match future.await {
+            Ok(v) => Ok(v),
+            Err(helix_lsp::Error::Timeout) => Ok(serde_json::Value::Null),
+            Err(e) => Err(e),
+        }
+    };
 
     let trigger_offset = cursor;
 
@@ -3820,51 +3838,73 @@ pub fn completion(cx: &mut Context) {
     let start_offset = cursor.saturating_sub(offset);
     let prefix = text.slice(start_offset..cursor).to_string();
 
+    doc.savepoint();
+    let trigger_version = doc.version();
     cx.callback(
         future,
         move |editor, compositor, response: Option<lsp::CompletionResponse>| {
-            let doc = doc!(editor);
-            if doc.mode() != Mode::Insert {
-                // we're not in insert mode anymore
-                return;
-            }
+            let get_items = || {
+                let doc = doc!(editor);
+                if doc.mode() != Mode::Insert {
+                    // we're not in insert mode anymore
+                    return None;
+                }
+                match &doc.savepoint {
+                    Some((current, _)) if *current == trigger_version => {}
+                    _ => return None,
+                };
+                if response.is_none() {
+                    editor.set_status(
+                        "The completion response is none and will request server again",
+                    );
+                    editor.reset_idle_timer();
+                    return None;
+                }
 
-            let mut items = match response {
-                Some(lsp::CompletionResponse::Array(items)) => items,
-                // TODO: do something with is_incomplete
-                Some(lsp::CompletionResponse::List(lsp::CompletionList {
-                    is_incomplete: _is_incomplete,
-                    items,
-                })) => items,
-                None => Vec::new(),
+                let mut items = match response {
+                    Some(lsp::CompletionResponse::Array(items)) => items,
+                    // TODO: do something with is_incomplete
+                    Some(lsp::CompletionResponse::List(lsp::CompletionList {
+                        is_incomplete: _is_incomplete,
+                        items,
+                    })) => items,
+                    None => return None,
+                };
+
+                if !prefix.is_empty() {
+                    items = items
+                        .into_iter()
+                        .filter(|item| {
+                            item.filter_text
+                                .as_ref()
+                                .unwrap_or(&item.label)
+                                .starts_with(&prefix)
+                        })
+                        .collect();
+                };
+
+                if items.is_empty() {
+                    // editor.set_error("No completion available".to_string());
+                    return None;
+                }
+                Some(items)
             };
-
-            if !prefix.is_empty() {
-                items = items
-                    .into_iter()
-                    .filter(|item| {
-                        item.filter_text
-                            .as_ref()
-                            .unwrap_or(&item.label)
-                            .starts_with(&prefix)
-                    })
-                    .collect();
-            }
-
-            if items.is_empty() {
-                // editor.set_error("No completion available");
-                return;
-            }
             let size = compositor.size();
             let ui = compositor.find::<ui::EditorView>().unwrap();
-            ui.set_completion(
-                editor,
-                items,
-                offset_encoding,
-                start_offset,
-                trigger_offset,
-                size,
-            );
+            match get_items() {
+                Some(items) => ui.set_completion(
+                    editor,
+                    items,
+                    offset_encoding,
+                    start_offset,
+                    trigger_offset,
+                    size,
+                ),
+                None => {
+                    ui.completion = None;
+                    doc_mut!(editor).savepoint = None;
+                }
+            }
         },
     );
 }
