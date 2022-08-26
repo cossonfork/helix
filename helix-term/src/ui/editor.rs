@@ -909,41 +909,9 @@ impl EditorView {
     }
 
     pub fn handle_idle_timeout(&mut self, cx: &mut crate::compositor::Context) -> EventResult {
-        use commands::insert::is_server_trigger_char;
-        use helix_core::chars::char_is_word;
-
         let config = cx.editor.config();
-        let (view, doc) = current!(cx.editor);
+        let doc = doc!(cx.editor);
         if doc.mode != Mode::Insert || !config.auto_completion {
-            return EventResult::Ignored(None);
-        }
-
-        let is_trigger = || -> bool {
-            let text = doc.text().slice(..);
-            let cursor = doc.selection(view.id).primary().cursor(text);
-
-            let mut iter = text.chars_at(cursor);
-            iter.reverse();
-            let last_char = match iter.next() {
-                Some(c) => c,
-                None => return false,
-            };
-            if is_server_trigger_char(doc, last_char) {
-                return true;
-            }
-            if !char_is_word(last_char) {
-                return false;
-            }
-            for _ in 1..config.completion_trigger_len {
-                match iter.next() {
-                    Some(c) if char_is_word(c) || is_server_trigger_char(doc, c) => {}
-                    _ => return false,
-                }
-            }
-            true
-        };
-
-        if !is_trigger() {
             return EventResult::Ignored(None);
         }
 
