@@ -2932,9 +2932,21 @@ pub mod insert {
     fn language_server_completion(cx: &mut Context, ch: char) {
         use helix_core::chars::char_is_word;
 
-        // if ch matches completion char, trigger completion
-        let doc = doc_mut!(cx.editor);
+        let config = cx.editor.config();
+        if !config.auto_completion {
+            return;
+        }
+        let (view, doc) = current_ref!(cx.editor);
         if char_is_word(ch) && doc.savepoint.is_none() {
+            let text = doc.text().slice(..);
+            let cursor = doc.selection(view.id).primary().cursor(text);
+            let mut iter = text.chars_at(cursor);
+            iter.reverse();
+            for _ in 0..config.completion_trigger_len {
+                if iter.next().map_or(true, |c| !char_is_word(c)) {
+                    return;
+                }
+            }
             cx.editor.reset_idle_timer();
             return;
         }
@@ -3883,68 +3895,57 @@ pub fn completion(cx: &mut Context) {
     cx.callback(
         future,
         move |editor, compositor, response: Option<lsp::CompletionResponse>| {
-            let get_items = || {
-                let doc = doc!(editor);
-                if doc.mode() != Mode::Insert {
-                    // we're not in insert mode anymore
-                    return None;
-                }
-                match &doc.savepoint {
-                    Some((current, _)) if *current == trigger_version => {}
-                    _ => return None,
-                };
-                if response.is_none() {
+            let doc = doc_mut!(editor);
+            let savepoint = match doc.savepoint.take() {
+                Some(s) => s,
+                None => return,
+            };
+            if doc.mode() != Mode::Insert {
+                return;
+            }
+            if savepoint.0 != trigger_version {
+                doc.savepoint = Some(savepoint);
+                return;
+            }
+
+            let mut items = match response {
+                Some(lsp::CompletionResponse::Array(items)) => items,
+                // TODO: do something with is_incomplete
+                Some(lsp::CompletionResponse::List(lsp::CompletionList {
+                    is_incomplete: _is_incomplete,
+                    items,
+                })) => items,
+                None => {
                     editor.set_status(
                         "The completion response is none and will request server again",
                     );
                     editor.reset_idle_timer();
-                    return None;
+                    return;
                 }
-
-                let mut items = match response {
-                    Some(lsp::CompletionResponse::Array(items)) => items,
-                    // TODO: do something with is_incomplete
-                    Some(lsp::CompletionResponse::List(lsp::CompletionList {
-                        is_incomplete: _is_incomplete,
-                        items,
-                    })) => items,
-                    None => return None,
-                };
-
-                if !prefix.is_empty() {
-                    items = items
-                        .into_iter()
-                        .filter(|item| {
-                            item.filter_text
-                                .as_ref()
-                                .unwrap_or(&item.label)
-                                .starts_with(&prefix)
-                        })
-                        .collect();
-                };
-
-                if items.is_empty() {
-                    // editor.set_error("No completion available".to_string());
-                    return None;
-                }
-                Some(items)
             };
+
+            if !prefix.is_empty() {
+                items.retain(|item| match &item.filter_text {
+                    Some(t) => t.starts_with(&prefix),
+                    None => item.label.starts_with(&prefix),
+                });
+            };
+
+            if items.is_empty() {
+                // editor.set_error("No completion available".to_string());
+                return;
+            }
+            doc.savepoint = Some(savepoint);
             let size = compositor.size();
             let ui = compositor.find::<ui::EditorView>().unwrap();
-            match get_items() {
-                Some(items) => ui.set_completion(
-                    editor,
-                    items,
-                    offset_encoding,
-                    start_offset,
-                    trigger_offset,
-                    size,
-                ),
-                None => {
-                    ui.completion = None;
-                    doc_mut!(editor).savepoint = None;
-                }
-            }
+            ui.set_completion(
+                editor,
+                items,
+                offset_encoding,
+                start_offset,
+                trigger_offset,
+                size,
+            );
         },
     );
 }
